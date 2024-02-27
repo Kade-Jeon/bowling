@@ -6,7 +6,7 @@ import java.util.List;
 public class Player {
     private String name;
     private Scoreboard scoreboard;
-    private List<Integer> scores;
+    private List<String> scores;
     public Player(String name, Scoreboard scoreboard) {
         this.name = name;
         this.scoreboard = scoreboard;
@@ -29,11 +29,11 @@ public class Player {
         this.scoreboard = scoreboard;
     }
 
-    public List<Integer> getScores() {
+    public List<String> getScores() {
         return scores;
     }
 
-    public void setScores(List<Integer> scores) {
+    public void setScores(List<String> scores) {
         this.scores = scores;
     }
 
