@@ -144,7 +144,7 @@ public class BowlingServiceImpl {
             List<String> scores = player.getScores();
             List<List<String>> scoreboard = player.getScoreboard().getScoreboard();
 
-            /*
+            /* 1라운드
                 ## 첫 라운드 계산 ##
                 1. 첫 라운드 스트라이크
                 2. 첫 라운드 스페어 성공
@@ -157,171 +157,307 @@ public class BowlingServiceImpl {
                     scores.add(round, " ");
                 }
                 //#2
-                if (scoreboard.get(round).size() > 1 && scoreboard.get(round).get(1).equals("/") ) { // 스페어 성공
+                if (scoreboard.get(round).size() > 1
+                        && scoreboard.get(round).get(1).equals("/") ) { // 스페어 성공
                     //현 점수 세팅
                     scores.add(round, " ");
                 }
                 //#3
-                if (scoreboard.get(round).size() > 1 &&
-                        changeScore(scoreboard.get(round).get(0)) + changeScore(scoreboard.get(round).get(1)) < 10 &&
-                        !scoreboard.get(round).get(1).equals("/")) { // 스페어 실패
+                if (scoreboard.get(round).size() > 1
+                        && !scoreboard.get(round).get(1).equals("/")) { // 스페어 실패
                     //현 점수 세팅
                     scores.add(round, changeScore(scoreboard.get(round).get(0)) + changeScore(scoreboard.get(round).get(1)) + "");
                 }
             }
 
-            if (round > 0) {
-                /*
-                   ## 스페어 처리 케이스 ##
-                   1. 직전 스페어 처리 + 스페어 성공
-                   2. 직전 스페어 처리 + 스페어 실패
-                   3. 직전 스페어 처리 + 스트라이크
-                */
-                if (scoreboard.get(round-1).size() > 1
-                        && scores.get(round-1).equals(" ")
-                        && scoreboard.get(round-1).get(1).equals("/")) {
-                    //#1
-                    if (scoreboard.get(round).size() > 1 && scoreboard.get(round).get(1).equals("/")) {
-                        //직전 스코어 세팅
-                        scores.set(round-1, changeScore(scoreboard.get(round-1).get(0)) - (changeScore(scoreboard.get(round-1).get(0)) + changeScore(scoreboard.get(round-1).get(1))) //스페어 값
-                                + changeScore(scoreboard.get(round).get(0))+ ""); // + 현재 초구
+            //# 2 ~ 9 라운드
+            if (0 < round && round < 9) {
+
+                //직전 스트라이크
+                if (scoreboard.get(round - 1).get(0).equals("X")
+                        && scoreboard.get(round).size() > 1) {
+                    if (round == 1) {
+                        // 현재 스페어 성공
+                        if (scoreboard.get(round).get(1).equals("/")) {
+
+                            scores.set(round-1, changeScore(scoreboard.get(round-1).get(0))
+                                    + changeScore(scoreboard.get(round).get(0))
+                                    + spareScore(scoreboard.get(round).get(0)) + "");
+
+                            scores.add(round, " ");
+                        }
+                        // 현재 스페어 실패
+                        if (!scoreboard.get(round).get(1).equals("/")) {
+
+                            scores.set(round-1, changeScore(scoreboard.get(round-1).get(0))
+                                    + changeScore(scoreboard.get(round).get(0))
+                                    + changeScore(scoreboard.get(round).get(1)) + "");
+
+                            scores.add(round, Integer.parseInt(scores.get(round-1))
+                                    + changeScore(scoreboard.get(round).get(0))
+                                    + changeScore(scoreboard.get(round).get(1))
+                                    + "");
+                        }
                     }
-                    //#2
-                    if (scoreboard.get(round).size() > 1 && !scoreboard.get(round).get(1).equals("/")) {
-                        //직전 스코어 세팅
-                        scores.set(round-1, changeScore(scoreboard.get(round-1).get(0)) - (changeScore(scoreboard.get(round-1).get(0)) + changeScore(scoreboard.get(round-1).get(1))) //스페어 값
-                                + changeScore(scoreboard.get(round).get(0))+ ""); //다음 초구
-                        //현재 스코어 세팅
-                        scores.add(round, Integer.parseInt(scores.get(round-1)) //직전 스코어 점수
-                                + changeScore(scoreboard.get(round).get(0)) // + 현재 초구
-                                + changeScore(scoreboard.get(round).get(1)) // + 현재 스페어
-                                + " ");
+                    if (round > 2) {
+                        // 현재 스페어 성공
+                        if (scoreboard.get(round).get(1).equals("/")) {
+
+                            scores.set(round-1, Integer.parseInt(scores.get(round-2))
+                                    + changeScore(scoreboard.get(round-1).get(0))
+                                    + changeScore(scoreboard.get(round).get(0))
+                                    + spareScore(scoreboard.get(round).get(0)) + "");
+
+                            scores.add(round, " ");
+                        }
+                        // 현재 스페어 실패
+                        if (!scoreboard.get(round).get(1).equals("/")) {
+
+                            scores.set(round-1, Integer.parseInt(scores.get(round-2))
+                                    + changeScore(scoreboard.get(round-1).get(0))
+                                    + changeScore(scoreboard.get(round).get(0))
+                                    + changeScore(scoreboard.get(round).get(1)) + "");
+
+                            scores.add(round, Integer.parseInt(scores.get(round-1))
+                                    + changeScore(scoreboard.get(round).get(0))
+                                    + changeScore(scoreboard.get(round).get(1))
+                                    + "");
+                        }
                     }
-                    //#3
-                    if (scoreboard.get(round).get(0).equals("X") ) {
-                        //직전 스코어 세팅
-                        scores.set(round-1, changeScore(scoreboard.get(round-1).get(0)) - (changeScore(scoreboard.get(round-1).get(0)) + changeScore(scoreboard.get(round-1).get(1))) //스페어 값
-                                + changeScore(scoreboard.get(round).get(0))+ ""); //다음 초구
-                        //현재 스코어 세팅
-                        scores.add(round, " ");
-                    }
-                    //직전 스코어 세팅
                 }
 
-                /*
-                    ## 스트라이크 케이스 ##
-                    1. 직전 스트라이크 + 스페어 성공
-                    2. 직전 스트라이크 + 스페어 실패
-                    3. 직전 스트라이크 + 스트라이크
-                */
-                if (scoreboard.get(round).size() > 1
-                        && scoreboard.get(round-1).get(0).equals("X")
-                        && scores.get(round-1).equals(" ")) { // 직전 스트라이크 && 현재 샷 + 스페어 성공 OR 샷 + 스페어 실패
 
-                    //#1
-                    if (scoreboard.get(round).get(1).equals("/")) { //스페어 성공
-                        //전 점수 세팅
-                        scores.set(round - 1, changeScore(scoreboard.get(round - 1).get(0)) //직전 스트라이크 +
-                                + changeScore(scoreboard.get(round).get(0)) - (changeScore(scoreboard.get(round).get(0)) + changeScore(scoreboard.get(round).get(1))) + ""); // 현재 샷 + 스페어ㄱ
-                        //현 점수 세팅
-                        scores.add(round, " "); // 현재 스코어 세팅
-                    }
-                    //#2
-                    if (!scoreboard.get(round).get(1).equals("/")) { // 스페어 실패
-                        //전 점수 세팅
-                        scores.set(round - 1, changeScore(scoreboard.get(round - 1).get(0)) //직전 스트라이크
-                                + changeScore(scoreboard.get(round).get(0)) + changeScore(scoreboard.get(round).get(1)) + "");  // + 현재 샷 + 스페어
 
-                        //현 점수 세팅
-                        scores.add(round, Integer.parseInt(scores.get(round-1)) // 직전 점수
-                                + changeScore(scoreboard.get(round).get(0)) + changeScore(scoreboard.get(round).get(1)) + ""); // + 현재 샷 + 스페어
-                    }
-                    //#3
-                if (scoreboard.get(round - 1).get(0).equals("X")
-                        && scores.get(round-1).equals(" ")
+
+                ////
+
+
+
+                //#1 : 직전 스트라이크, 현재 스트라이크
+                if (scoreboard.get(round-1).get(0).equals("X")
                         && scoreboard.get(round).get(0).equals("X")) {
-                    //전 점수 세팅
-                    scores.set(round - 1, " ");
-                    //현 점수 세팅
                     scores.add(round, " ");
                 }
-                }
-
-                /*
-                    ## 더블 케이스 ##
-                    1. 스트라이크 + 스트라이크 + 스페어 성공
-                    2. 스트라이크 + 스트라이크 + 스페어 실패
-                    3. 스트라이크 + 스트라이크 + 스트라이크
-                 */
-                if (1 < round && round < 9
-                        && scoreboard.get(round - 2).get(0).equals("X")//전전 스트라이크
-                        && scoreboard.get(round - 1).get(0).equals("X")) { // 직전 스트라이크
-
-                   //#1
-                    if (scoreboard.get(round).size() > 1
-                        && scoreboard.get(round).get(1).equals("/")) {
-                        //전전 점수 세팅
-                        scores.set(round-2, changeScore(scoreboard.get(round - 2).get(0)) //전전 스트라이크
-                                + changeScore(scoreboard.get(round - 1).get(0)) // 전 스트라이크
-                                + changeScore(scoreboard.get(round).get(0)) + ""); // 현 초구
-                        //전 점수 세팅
-                        scores.set(round-2, scores.get(round-2) //전전 스코어
-                                + changeScore(scoreboard.get(round - 1).get(0)) // 전 스트라이크
-                                + changeScore(scoreboard.get(round).get(0)) + changeScore(scoreboard.get(round).get(1)) + ""); // 현 초구 + 스페어
-                        //현 점수 세팅
+                    //#1-1 : 1 ~ 3 라운드 : 터키
+                    if (round > 1
+                            && scoreboard.get(round-2).size() < 2
+                            && scoreboard.get(round-2).get(0).equals("X")
+                            && scoreboard.get(round-1).get(0).equals("X")
+                            && scoreboard.get(round).get(0).equals("X")) {
+                        scores.set(round - 2, changeScore(scoreboard.get(round-2).get(0))
+                                        + changeScore(scoreboard.get(round-1).get(0))
+                                        + changeScore(scoreboard.get(round).get(0)) + "");
+                        scores.add(round-1, " ");
                         scores.add(round, " ");
                     }
 
-                    //#2
-                    if (scoreboard.get(round).size() > 1
+                    //#1-1-1 : 1 ~ 3 라운드 : 스트라이크 스트라이크 스페어 성공
+                    if (round > 1
+                            && scoreboard.get(round-2).size() < 2
+                            && scoreboard.get(round-2).get(0).equals("X")
+                            && scoreboard.get(round-1).size() < 2
+                            && scoreboard.get(round-1).get(0).equals("X")
+                            && scoreboard.get(round).size() > 1
+                            && scoreboard.get(round).get(1).equals("/")) {
+
+                        scores.set(round - 2, changeScore(scoreboard.get(round-2).get(0))
+                                + changeScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0)) + "");
+                        scores.set(round-1, Integer.parseInt(scores.get(round-2))
+                                + changeScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0))
+                                + spareScore(scoreboard.get(round).get(0)) + "");
+                        scores.add(round, " ");
+                    }
+                    //#1-1-1 : 1 ~ 3 라운드 : 스트라이크 스트라이크 스페어 실패
+                    if (round > 1
+                            && scoreboard.get(round-2).size() < 2
+                            && scoreboard.get(round-2).get(0).equals("X")
+                            && scoreboard.get(round-1).get(0).equals("X")
+                            && scoreboard.get(round).size() > 1
+                            && !scoreboard.get(round).get(1).equals("/")) {
+
+                        scores.set(round - 2, changeScore(scoreboard.get(round-2).get(0))
+                                + changeScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0)) + "");
+                        scores.set(round-1, Integer.parseInt(scores.get(round-2))
+                                + changeScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0))
+                                + changeScore(scoreboard.get(round).get(1)) + "");
+                        scores.add(round, Integer.parseInt(scores.get(round-1))
+                                + changeScore(scoreboard.get(round).get(0))
+                                + changeScore(scoreboard.get(round).get(1)) + "");
+                    }
+
+                    //#1-2 : 2 ~ 9 라운드 : 터키
+                    if (round > 2
+                            && scoreboard.get(round-2).size() < 2
+                            && scoreboard.get(round-2).get(0).equals("X")
+                            && scoreboard.get(round-1).get(0).equals("X")
+                            && scoreboard.get(round).get(0).equals("X")) {
+
+                        scores.set(round - 2, Integer.parseInt(scores.get(round-3))
+                                + changeScore(scoreboard.get(round-2).get(0))
+                                + changeScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0)) + "");
+                        scores.add(round-1, " ");
+                        scores.add(round, " ");
+                    }
+
+                    //#1-3 : 2 ~ 9 라운드 : 스트라이크 스트라이크 스페어 성공
+                    if (round > 2
+                            && scoreboard.get(round-2).size() < 2
+                            && scoreboard.get(round-2).get(0).equals("X")
+                            && scoreboard.get(round-1).get(0).equals("X")
+                            && scoreboard.get(round).size() > 1
+                            && scoreboard.get(round).get(1).equals("/")) {
+
+                        scores.set(round - 2, Integer.parseInt(scores.get(round-3))
+                                + changeScore(scoreboard.get(round-2).get(0))
+                                + changeScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0)) + "");
+                        scores.set(round-1, Integer.parseInt(scores.get(round-2))
+                                + changeScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0))
+                                + spareScore(scoreboard.get(round).get(0)) + "");
+                        scores.add(round, " ");
+                    }
+
+                    //#1-3-1 : 2 ~ 9 라운드 : 스트라이크 스트라이크 스페어 실패
+                    if (round > 2
+                            && scoreboard.get(round-2).size() < 2
+                            && scoreboard.get(round-2).get(0).equals("X")
+                            && scoreboard.get(round-1).size() < 2
+                            && scoreboard.get(round-1).get(0).equals("X")
+                            && scoreboard.get(round).size() > 1
+                            && !scoreboard.get(round).get(1).equals("/")) {
+
+                        scores.set(round - 2, Integer.parseInt(scores.get(round-3))
+                                + changeScore(scoreboard.get(round-2).get(0))
+                                + changeScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0)) + "");
+                        scores.set(round-1, Integer.parseInt(scores.get(round-2))
+                                + changeScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0))
+                                + changeScore(scoreboard.get(round).get(1)) + "");
+                        scores.add(round, Integer.parseInt(scores.get(round-1)
+                                + changeScore(scoreboard.get(round).get(0)))
+                                + changeScore(scoreboard.get(round).get(1)) + "");
+                    }
+                //}
+
+                //#2 : 직전 스페어 성공 + 현재 스페어 성공
+                if (scoreboard.get(round-1).size() > 1
+                        && scoreboard.get(round-1).get(1).equals("/")
+                        && scoreboard.get(round).size() > 1
+                        && scoreboard.get(round).get(1).equals("/")) {
+
+                    if (round == 1) {
+                        scores.set(round-1, Integer.parseInt(scoreboard.get(round-1).get(0))
+                                + spareScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0)) + "");
+
+                        scores.add(round, " ");
+                    }
+
+                    if (round > 1) {
+                        scores.set(round - 1, Integer.parseInt(scores.get(round-2))
+                                + changeScore(scoreboard.get(round-1).get(0))
+                                + spareScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0)) + "");
+
+                        scores.add(round, " ");
+                    }
+                }
+
+                //#3 : 직전 스페어 성공 + 현재 스페어 실패
+                if (scoreboard.get(round-1).size() > 1
+                        && scoreboard.get(round-1).get(1).equals("/")
+                        && scoreboard.get(round).size() > 1
                         && !scoreboard.get(round).get(1).equals("/")) {
-                        //전전 점수 세팅
-                        scores.set(round-2, changeScore(scoreboard.get(round - 2).get(0)) //전전 스트라이크
-                                + changeScore(scoreboard.get(round - 1).get(0)) // 전 스트라이크
-                                + changeScore(scoreboard.get(round).get(0)) + ""); // 현 초구
-                        //전 점수 세팅
-                        scores.set(round-2, scores.get(round -2) //전전 스코어
-                                + changeScore(scoreboard.get(round - 1).get(0)) // 전 스트라이크
-                                + changeScore(scoreboard.get(round).get(0)) + changeScore(scoreboard.get(round).get(1)) + ""); // 현 초구 + 스페어
-                        //현 점수 세팅
-                        scores.add(round, scores.get(round -2) //전전 스코어
-                        + scores.get(round -1) // 전 스코어
-                        + changeScore(scoreboard.get(round).get(0)) + changeScore(scoreboard.get(round).get(1)) + ""); // 현 초구 + 스페어
+
+                    if (round == 1) {
+
+                        scores.set(round - 1, changeScore(scoreboard.get(round-1).get(0))
+                                + spareScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0)) + "");
+
+                        scores.add(round, Integer.parseInt(scores.get(round-1))
+                                + changeScore(scoreboard.get(round).get(0))
+                                + changeScore(scoreboard.get(round).get(1)) + "");
                     }
-                    //#3
+
+                    if (round > 1) {
+
+                        scores.set(round - 1, Integer.parseInt(scores.get(round-2))
+                                + changeScore(scoreboard.get(round-1).get(0))
+                                + spareScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0)) + "");
+
+                        scores.add(round, Integer.parseInt(scores.get(round-1))
+                                + changeScore(scoreboard.get(round).get(0))
+                                + changeScore(scoreboard.get(round).get(1)) + "");
+                    }
+                }
+
+                //#4 : 직전 스페어 성공 + 스트라이크
+                if (scoreboard.get(round-1).size() > 1
+                        && scoreboard.get(round-1).get(1).equals("/")
+                        && scoreboard.get(round).get(0).equals("X")) {
+
+                    if (round == 1) {
+
+                        scores.set(round - 1, changeScore(scoreboard.get(round-1).get(0))
+                                + spareScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0)) + "");
+
+                        scores.add(round, " ");
+                    }
+
+                    if (round > 1) {
+
+                        scores.set(round - 1, Integer.parseInt(scores.get(round-2))
+                                + changeScore(scoreboard.get(round-1).get(0))
+                                + spareScore(scoreboard.get(round-1).get(0))
+                                + changeScore(scoreboard.get(round).get(0)) + "");
+
+                        scores.add(round, " ");
+                    }
+                }
+
+
+
+
+                //# 직전 스페어 실패
+                if (scoreboard.get(round-1).size() > 1
+                        && !scoreboard.get(round-1).get(1).equals("/")) {
+
+                    //# 스트라이크
                     if (scoreboard.get(round).get(0).equals("X")) {
-                        //전전 점수 세팅
-                        scores.set(round-2, changeScore(scoreboard.get(round - 2).get(0)) //전전 스트라이크
-                                + changeScore(scoreboard.get(round - 1).get(0)) // 전 스트라이크
-                                + changeScore(scoreboard.get(round).get(0)) + ""); // 현 초구
-                        //전 점수 세팅
-                        scores.add(round-1, " "); // 현 초구 + 스페어
-                        //현 점수 세팅
-                        scores.add(round, " "); // 현 초구 + 스페어
+                        scores.add(round, " ");
                     }
-                }
-                /*
-                    ## 터키 케이스 ##
-                    1. 스트라이크 + 스트라이크 + 스트라이크
-                 */
-          /*      if ( scoreboard.get(round - 2).get(0).equals("X")
-                    && scoreboard.get(round - 1).get(0).equals("X")
-                    && scoreboard.get(round).get(0).equals("X") ) {
-                    System.out.println("hi");
+
+                    //# 스페어 성공
+                    if (scoreboard.get(round).size() > 1
+                            && scoreboard.get(round).get(1).equals("/") ) {
+                        scores.add(round, " ");
+                    }
+                    //# 스페어 실패
+                    if (scoreboard.get(round).size() > 1
+                            && !scoreboard.get(round).get(1).equals("/")) {
+                        scores.add(round, Integer.parseInt(scores.get(round-1))
+                                + changeScore(scoreboard.get(round).get(0))
+                                + changeScore(scoreboard.get(round).get(1)) + "");
+                    }
+
                 }
 
-                if (round == 9) {
-
-                }*/
             }
             System.out.println(player.getScores());
         }
     }
 
     public int changeScore(String string) {
-        if (string.equals("/")) {
-            return -10;
-        }
         if (string.equals("X")) {
             return 10;
         }
@@ -363,8 +499,8 @@ public class BowlingServiceImpl {
         return 0;
     }
 
-    public void testMethod() {
-        System.out.println("git error");
+    public int spareScore(String firstShot) {
+        return 10 - Integer.parseInt(firstShot);
     }
 }
 
