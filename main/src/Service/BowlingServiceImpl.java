@@ -86,7 +86,9 @@ public class BowlingServiceImpl {
                             player.getScoreboard().setScore(i, first, GSS.SPARE.getSign());
                             break;
                         }
-
+                        if (i == 9 && spare.equals("10")) {
+                            break;
+                        }
                         player.getScoreboard().setScore(i, first, spare);
                         break;
 
@@ -112,7 +114,7 @@ public class BowlingServiceImpl {
                                 player.getScoreboard().setScore(9, GSS.STRIKE.getSign(), spare, GSS.SPARE.getSign());
                                 break;
                             }
-                            if (first.equals("10") && (Integer.parseInt(spare) + Integer.parseInt(bonus) != 10)) { // X 샷 스페어실패
+                            if (first.equals("10") && (Integer.parseInt(spare) + Integer.parseInt(bonus) < 10)) { // X 샷 스페어실패
                                 player.getScoreboard().setScore(9, GSS.STRIKE.getSign(), spare, bonus);
                                 break;
                             }
