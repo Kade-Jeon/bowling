@@ -362,5 +362,9 @@ public class BowlingServiceImpl {
         }
         return 0;
     }
+
+    public void testMethod() {
+        System.out.println("git error");
+    }
 }
 
