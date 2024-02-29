@@ -66,18 +66,33 @@ public class Messages {
 
     public void askPeople() {
         System.out.print("""
-        참가자는 최대 4명까지 가능합니다.
-        예) 3명인 경우 -> 3
-        """);
-        System.out.print("참가자 수를 입력해주세요. : ");
+                ______  _   _  _____   _____  _   _  _____   _   _  _   _ ___  _________  _____ ______   _____ ______  ______  _       ___  __   __ _____ ______  _____\s
+                | ___ \\| | | ||_   _| |_   _|| | | ||  ___| | \\ | || | | ||  \\/  || ___ \\|  ___|| ___ \\ |  _  ||  ___| | ___ \\| |     / _ \\ \\ \\ / /|  ___|| ___ \\/  ___|
+                | |_/ /| | | |  | |     | |  | |_| || |__   |  \\| || | | || .  . || |_/ /| |__  | |_/ / | | | || |_    | |_/ /| |    / /_\\ \\ \\ V / | |__  | |_/ /\\ `--.\s
+                |  __/ | | | |  | |     | |  |  _  ||  __|  | . ` || | | || |\\/| || ___ \\|  __| |    /  | | | ||  _|   |  __/ | |    |  _  |  \\ /  |  __| |    /  `--. \\
+                | |    | |_| |  | |     | |  | | | || |___  | |\\  || |_| || |  | || |_/ /| |___ | |\\ \\  \\ \\_/ /| |     | |    | |____| | | |  | |  | |___ | |\\ \\ /\\__/ /
+                \\_|     \\___/   \\_/     \\_/  \\_| |_/\\____/  \\_| \\_/ \\___/ \\_|  |_/\\____/ \\____/ \\_| \\_|  \\___/ \\_|     \\_|    \\_____/\\_| |_/  \\_/  \\____/ \\_| \\_|\\____/\s
+                              
+                                
+                ___  ___  ___  __   __ _____ ___  ___ _   _ ___  ___      ___\s
+                |  \\/  | / _ \\ \\ \\ / /|_   _||  \\/  || | | ||  \\/  |     /   |
+                | .  . |/ /_\\ \\ \\ V /   | |  | .  . || | | || .  . |    / /| |
+                | |\\/| ||  _  | /   \\   | |  | |\\/| || | | || |\\/| |   / /_| |
+                | |  | || | | |/ /^\\ \\ _| |_ | |  | || |_| || |  | |   \\___  |
+                \\_|  |_/\\_| |_/\\/   \\/ \\___/ \\_|  |_/ \\___/ \\_|  |_/       |_/
+                                                                             \s
+      
+                예) 3명인 경우 -> 3
+                """);
+        System.out.print("참가자 수를 입력해주세요 (최대 4인) : ");
     }
 
-    public void showScoreboard(List<Player> players) {
-        players.forEach((Player p) -> {
+    public void showScoreboard(List<Player> playerList) {
+        playerList.forEach((Player p) -> {
             System.out.println(p.getName());
             p.showScoreboard();
             System.out.println("""
-                    
+                                        
                     """);
         });
     }
@@ -179,6 +194,48 @@ public class Messages {
                     \\_| \\_| \\___/  \\___/ \\_| \\_/|___/          \\___/ \\___/\s               
                     """);
             default -> System.out.println("라운드 입력 값 에러");
+        }
+    }
+
+    public void showScoreTable(List<Player> playerList) {
+        System.out.print("""
+                |---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
+                |%9s|%9d|%9d|%9d|%9d|%9d|%9d|%9d|%9d|%9d|%9d|
+                |---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
+                """.formatted(" ",1,2,3,4,5,6,7,8,9,10));
+        String scoreTable = """
+                |%9s|%9s|%9s|%9s|%9s|%9s|%9s|%9s|%9s|%9s|%9s|
+                |---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
+                """;
+        String calTable = """
+                |%9s|%9s|%9s|%9s|%9s|%9s|%9s|%9s|%9s|%9s|%9s|
+                |---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|---------|
+                """;
+        for (Player player : playerList) {
+            System.out.print(scoreTable.formatted(player.getName(),
+                    player.getScoreboard().getScoreboard().get(0),
+                    player.getScoreboard().getScoreboard().get(1),
+                    player.getScoreboard().getScoreboard().get(2),
+                    player.getScoreboard().getScoreboard().get(3),
+                    player.getScoreboard().getScoreboard().get(4),
+                    player.getScoreboard().getScoreboard().get(5),
+                    player.getScoreboard().getScoreboard().get(6),
+                    player.getScoreboard().getScoreboard().get(7),
+                    player.getScoreboard().getScoreboard().get(8),
+                    player.getScoreboard().getScoreboard().get(9)
+            ));
+            System.out.print(calTable.formatted(" ",
+                    player.getScores().get(0),
+                    player.getScores().get(1),
+                    player.getScores().get(2),
+                    player.getScores().get(3),
+                    player.getScores().get(4),
+                    player.getScores().get(5),
+                    player.getScores().get(6),
+                    player.getScores().get(7),
+                    player.getScores().get(8),
+                    player.getScores().get(9)
+            ));
         }
     }
 }
