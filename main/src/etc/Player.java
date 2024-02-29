@@ -11,6 +11,7 @@ public class Player {
         this.name = name;
         this.scoreboard = scoreboard;
         this.scores = new ArrayList<>(10);
+        initScores();
     }
 
     public String getName() {
@@ -33,8 +34,18 @@ public class Player {
         return scores;
     }
 
+    public int getRoundScore(int round) {
+        return Integer.parseInt(scores.get(round));
+    }
+
     public void setScores(List<String> scores) {
         this.scores = scores;
+    }
+
+    public void initScores() {
+        for (int i = 0; i < 10; i++) {
+            scores.add(i,"");
+        }
     }
 
     public void showScoreboard() {
